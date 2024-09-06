@@ -1,8 +1,18 @@
+terraform {
+  required_version = ">= 1.0.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
+}
+
 provider "aws" {
   region = var.region
 }
 
-# Declare the state lock module
 module "ecr" {
   source           = "./modules"
   region           = var.region
@@ -12,4 +22,5 @@ module "ecr" {
   environment      = var.environment
   cost_center      = var.cost_center
   application      = var.application
+  tags             = var.tags
 }

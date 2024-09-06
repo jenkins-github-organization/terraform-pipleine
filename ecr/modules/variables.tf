@@ -1,9 +1,3 @@
-variable "tags" {
-  default     = {}
-  type        = map(string)
-  description = "Extra tags to attach to ecr"
-}
-
 variable "region" {
   description = "The AWS region where the ECR repository will be created."
   type        = string
