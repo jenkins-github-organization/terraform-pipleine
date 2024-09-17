@@ -12,19 +12,8 @@ pipeline {
                     command:
                     - cat
                     tty: true
-                    volumeMounts:
-                    - name: terraform-state-storage
-                      mountPath: /workspace
-                  volumes:
-                  - name: terraform-state-storage
-                    persistentVolumeClaim:
-                      claimName: jenkins-pv-claim
             '''
         }
-    }
-
-    parameters {
-        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select whether to apply or destroy infrastructure.')
     }
 
     stages {
@@ -77,19 +66,13 @@ pipeline {
                 }
             }
         }
-        stage('Terraform Apply/Destroy') {
+        stage('Terraform Apply') {
             steps {
                 container('terraform') {
                     script {
-                        if (params.ACTION == 'apply') {
-                            sh '''
-                                terraform -chdir=ec2 apply -auto-approve
-                                '''
-                        } else if (params.ACTION == 'destroy') {
-                            sh '''
-                                terraform -chdir=ec2 destroy -auto-approve
-                                '''
-                        }
+                        sh '''
+                            terraform -chdir=ec2 apply -auto-approve
+                            '''
                     }
                 }
             }

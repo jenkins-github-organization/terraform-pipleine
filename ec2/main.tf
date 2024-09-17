@@ -30,32 +30,3 @@ resource "aws_instance" "example" {
     volume_type = "gp2"
   }
 }
-
-resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh"
-  description = "Allow SSH inbound traffic"
-
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow all outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-output "example_instance_id" {
-  value = aws_instance.example.id
-}
-
-output "security_group_id" {
-  value = aws_security_group.allow_ssh.id
-}
