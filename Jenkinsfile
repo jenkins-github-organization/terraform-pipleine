@@ -18,7 +18,7 @@ pipeline {
                   volumes:
                   - name: terraform-state-storage
                     persistentVolumeClaim:
-                      claimName: terraform-pvc
+                      claimName: jenkins-pv-claim
             '''
         }
     }
