@@ -15,7 +15,8 @@ provider "aws" {
 
 resource "aws_instance" "example" {
   ami           = "ami-05134c8ef96964280"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
+  monitoring    = true
 
   tags = {
     Name = "MyEC2Instance"
@@ -43,6 +44,7 @@ resource "aws_security_group" "allow_ssh" {
   }
 
   egress {
+    description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
