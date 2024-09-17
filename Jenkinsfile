@@ -13,12 +13,12 @@ pipeline {
                     - cat
                     tty: true
                     volumeMounts:
-                    - name: terraform-cache
+                    - name: terraform-state-storage
                       mountPath: /workspace
                   volumes:
-                  - name: terraform-cache
-                    hostPath:
-                      path: /home/jenkins/terraform-cache
+                  - name: terraform-state-storage
+                    persistentVolumeClaim:
+                      claimName: terraform-pvc
             '''
         }
     }
