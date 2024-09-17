@@ -53,7 +53,7 @@ pipeline {
                 container('terraform') {
                     script {
                         sh '''
-                            checkov --directory ecr
+                            checkov --directory ec2
                             '''
                     }
                 }
@@ -75,7 +75,7 @@ pipeline {
                 container('terraform') {
                     script {
                         sh '''
-                            terraform -chdir=ec2 apply
+                            terraform -chdir=ec2 apply -auto-approve
                             '''
                     }
                 }
