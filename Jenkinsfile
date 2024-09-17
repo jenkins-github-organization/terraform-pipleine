@@ -70,13 +70,19 @@ pipeline {
                 }
             }
         }
-        stage('Terraform Apply') {
+        stage('Terraform Apply/Destroy') {
             steps {
                 container('terraform') {
                     script {
-                        sh '''
-                            terraform -chdir=ec2 apply -auto-approve
-                            '''
+                        if (params.ACTION == 'apply') {
+                            sh '''
+                                terraform -chdir=ec2 apply -auto-approve
+                                '''
+                        } else if (params.ACTION == 'destroy') {
+                            sh '''
+                                terraform -chdir=ec2 destroy -auto-approve
+                                '''
+                        }
                     }
                 }
             }
