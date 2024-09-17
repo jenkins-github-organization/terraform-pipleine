@@ -36,44 +36,31 @@ pipeline {
         stage('Tflint') {
             steps {
                 container('terraform') {
-                    script {
-                        sh '''
-                            tflint --chdir=ec2
-                            '''
-                    }
+                    sh 'tflint --chdir=ec2'
                 }
             }
         }
         stage('Terraform Init') {
             steps {
                 container('terraform') {
-                    script {
-                        sh '''
-                            terraform -chdir=ec2 init
-                            '''
-                    }
+                    sh '''
+                        terraform -chdir=ec2 init \
+                        -backend-config="path=/terraform-state/terraform.tfstate"
+                    '''
                 }
             }
         }
         stage('Checkov') {
             steps {
                 container('terraform') {
-                    script {
-                        sh '''
-                            checkov --directory ec2
-                            '''
-                    }
+                    sh 'checkov --directory ec2'
                 }
             }
         }
         stage('Terraform Plan') {
             steps {
                 container('terraform') {
-                    script {
-                        sh '''
-                            terraform -chdir=ec2 plan
-                            '''
-                    }
+                    sh 'terraform -chdir=ec2 plan -out=/terraform-state/tfplan'
                 }
             }
         }
@@ -82,15 +69,21 @@ pipeline {
                 container('terraform') {
                     script {
                         if (params.ACTION == 'apply') {
-                            sh '''
-                                terraform -chdir=ec2 apply -auto-approve
-                                '''
+                            sh 'terraform -chdir=ec2 apply -auto-approve /terraform-state/tfplan'
                         } else if (params.ACTION == 'destroy') {
-                            sh '''
-                                terraform -chdir=ec2 destroy -auto-approve
-                                '''
+                            sh 'terraform -chdir=ec2 destroy -auto-approve'
                         }
                     }
+                }
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                container('terraform') {
+                    sh '''
+                        rm -f /terraform-state/tfplan
+                        cp ec2/.terraform.lock.hcl /terraform-state/ || true
+                    '''
                 }
             }
         }
