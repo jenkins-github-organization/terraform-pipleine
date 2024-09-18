@@ -16,6 +16,10 @@ pipeline {
         }
     }
 
+    parameters {
+        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select whether to apply or destroy infrastructure.')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -23,6 +27,9 @@ pipeline {
             }
         }
         stage('Tflint') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 container('terraform') {
                     script {
@@ -34,6 +41,9 @@ pipeline {
             }
         }
         stage('Terraform Init') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 container('terraform') {
                     script {
@@ -45,6 +55,9 @@ pipeline {
             }
         }
         stage('Checkov') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 container('terraform') {
                     script {
@@ -56,6 +69,9 @@ pipeline {
             }
         }
         stage('Terraform Plan') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
             steps {
                 container('terraform') {
                     script {
@@ -66,13 +82,19 @@ pipeline {
                 }
             }
         }
-        stage('Terraform Apply') {
+        stage('Terraform Apply/Destroy') {
             steps {
                 container('terraform') {
                     script {
-                        sh '''
-                            terraform -chdir=/workspace/ec2 apply -auto-approve
+                        if (params.ACTION == 'apply') {
+                            sh '''
+                                terraform -chdir=/workspace/ec2 apply -auto-approve
                             '''
+                        } else if (params.ACTION == 'destroy') {
+                            sh '''
+                                terraform -chdir=/workspace/ec2 destroy -auto-approve
+                            '''
+                        }
                     }
                 }
             }

@@ -7,6 +7,12 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    bucket         = "terraform-state-dcube"
+    key            = "jenkins/terraform.tfstate"
+    region         = "us-west-2"
+  }
 }
 
 provider "aws" {
@@ -19,7 +25,7 @@ resource "aws_instance" "example" {
   monitoring    = true
 
   tags = {
-    Name = "MyEC2Instance"
+    Name = "EC2Instance"
   }
 
   key_name = "aswin-key"
