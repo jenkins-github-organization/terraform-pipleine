@@ -41,9 +41,6 @@ pipeline {
             }
         }
         stage('Terraform Init') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
             steps {
                 container('terraform') {
                     script {
