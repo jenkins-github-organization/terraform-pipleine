@@ -1,19 +1,7 @@
 @Library('jenkins-shared-library@main') _
 pipeline {
     agent {
-        kubernetes {
-            yaml '''
-                apiVersion: v1
-                kind: Pod
-                spec:
-                  containers:
-                  - name: terraform
-                    image: techiescamp/terraform-agent:2.0.0
-                    command:
-                    - cat
-                    tty: true
-            '''
-        }
+        label 'terraform-build-agent'
     }
 
     parameters {
