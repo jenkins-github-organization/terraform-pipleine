@@ -81,4 +81,11 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            script {
+                emailReport('aswin@crunchops.com')
+            }
+        }
+    }
 }
