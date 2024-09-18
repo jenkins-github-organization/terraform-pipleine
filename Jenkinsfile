@@ -33,7 +33,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        tfLint.test(ec2)
+                        tfLint.test('ec2')
                     }
                 }
             }
@@ -54,7 +54,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        checkov.scan(ec2)
+                        checkov.scan('ec2')
                     }
                 }
             }
@@ -66,7 +66,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        terraform.plan(ec2)
+                        terraform.plan('ec2')
                     }
                 }
             }
@@ -76,9 +76,9 @@ pipeline {
                 container('terraform') {
                     script {
                         if (params.ACTION == 'apply') {
-                            terraform.apply(ec2)
+                            terraform.apply('ec2')
                         } else if (params.ACTION == 'destroy') {
-                            terraform.destroy(ec2)
+                            terraform.destroy('ec2')
                         }
                     }
                 }
