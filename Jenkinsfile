@@ -88,11 +88,11 @@ pipeline {
                     script {
                         if (params.ACTION == 'apply') {
                             sh '''
-                                terraform -chdir=/workspace/ec2 apply -auto-approve
+                                terraform -chdir=ec2 apply -auto-approve
                             '''
                         } else if (params.ACTION == 'destroy') {
                             sh '''
-                                terraform -chdir=/workspace/ec2 destroy -auto-approve
+                                terraform -chdir=ec2 destroy -auto-approve
                             '''
                         }
                     }
