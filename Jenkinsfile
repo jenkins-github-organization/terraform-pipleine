@@ -46,9 +46,9 @@ pipeline {
                     script {
                         sh '''
                             terraform -chdir=ec2 init \
-                            -backend-config="bucket=terraform-state-techiescamp" \
-                            -backend-config="key=jenkins/terraform.tfstate" \
-                            -backend-config="region=us-west-2"
+                                -backend-config="bucket=terraform-state-techiescamp" \
+                                -backend-config="key=jenkins/terraform.tfstate" \
+                                -backend-config="region=us-west-2"
                         '''
                     }
                 }
