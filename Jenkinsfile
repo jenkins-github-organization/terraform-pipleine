@@ -33,9 +33,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        sh '''
-                            tflint --chdir=ec2
-                            '''
+                        tfLint.test(ec2)
                     }
                 }
             }
@@ -44,12 +42,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        sh '''
-                            terraform -chdir=ec2 init \
-                                -backend-config="bucket=terraform-state-techiescamp" \
-                                -backend-config="key=jenkins/terraform.tfstate" \
-                                -backend-config="region=us-west-2"
-                        '''
+                        terraform.init('ec2', 'terraform-state-techiescamp', 'jenkins/terraform.tfstate', 'us-west-2')
                     }
                 }
             }
@@ -61,9 +54,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        sh '''
-                            checkov --directory ec2
-                            '''
+                        checkov.scan(ec2)
                     }
                 }
             }
@@ -75,9 +66,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        sh '''
-                            terraform -chdir=ec2 plan
-                            '''
+                        terraform.plan(ec2)
                     }
                 }
             }
@@ -87,13 +76,9 @@ pipeline {
                 container('terraform') {
                     script {
                         if (params.ACTION == 'apply') {
-                            sh '''
-                                terraform -chdir=ec2 apply -auto-approve
-                            '''
+                            terraform.apply(ec2)
                         } else if (params.ACTION == 'destroy') {
-                            sh '''
-                                terraform -chdir=ec2 destroy -auto-approve
-                            '''
+                            terraform.destroy(ec2)
                         }
                     }
                 }
