@@ -7,12 +7,6 @@ terraform {
       version = "~> 5.0"
     }
   }
-
-  backend "s3" {
-    bucket         = "terraform-state-dcube"
-    key            = "jenkins/terraform.tfstate"
-    region         = "us-west-2"
-  }
 }
 
 provider "aws" {

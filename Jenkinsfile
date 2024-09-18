@@ -45,8 +45,11 @@ pipeline {
                 container('terraform') {
                     script {
                         sh '''
-                            terraform -chdir=ec2 init
-                            '''
+                            terraform -chdir=ec2 init \
+                            -backend-config="terraform-state-techiescamp" \
+                            -backend-config="jenkins/terraform.tfstate" \
+                            -backend-config="us-west-2"
+                        '''
                     }
                 }
             }
