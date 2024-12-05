@@ -1,4 +1,4 @@
-@Library('jenkins-shared-library@main') _
+@Library('jenkins-shared-library@master') _
 pipeline {
     agent {
         label 'terraform-build-agent'
@@ -8,41 +8,22 @@ pipeline {
         choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select whether to apply or destroy infrastructure.')
     }
 
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+    }
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        stage('Tflint') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
-            steps {
-                container('terraform') {
-                    script {
-                        tfLint.test('ec2')
-                    }
-                }
-            }
-        }
         stage('Terraform Init') {
             steps {
                 container('terraform') {
                     script {
-                        terraform.init('ec2', 'terraform-state-techiescamp', 'jenkins/terraform.tfstate', 'us-west-2')
-                    }
-                }
-            }
-        }
-        stage('Checkov') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
-            steps {
-                container('terraform') {
-                    script {
-                        checkov.scan('ec2')
+                        terraform.init('pipelines/project-02/ec2', 'terraform-state-techiescamp', 'jenkins/terraform.tfstate', 'us-west-2')
                     }
                 }
             }
@@ -54,7 +35,7 @@ pipeline {
             steps {
                 container('terraform') {
                     script {
-                        terraform.plan('ec2')
+                        terraform.plan('pipelines/project-02/ec2')
                     }
                 }
             }
@@ -72,19 +53,12 @@ pipeline {
                 container('terraform') {
                     script {
                         if (params.ACTION == 'apply') {
-                            terraform.apply('ec2')
+                            terraform.apply('pipelines/project-02/ec2')
                         } else if (params.ACTION == 'destroy') {
-                            terraform.destroy('ec2')
+                            terraform.destroy('pipelines/project-02/ec2')
                         }
                     }
                 }
-            }
-        }
-    }
-    post {
-        always {
-            script {
-                emailReport('aswin@crunchops.com')
             }
         }
     }
