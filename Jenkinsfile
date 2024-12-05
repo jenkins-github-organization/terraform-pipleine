@@ -8,11 +8,6 @@ pipeline {
         choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select whether to apply or destroy infrastructure.')
     }
 
-    environment {
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_KEY')
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -21,11 +16,13 @@ pipeline {
         }
         stage('Terraform Init') {
             steps {
+              withCredentials([credentials('AWS_CRED')]) {
                 container('terraform') {
                     script {
                         terraform.init('ec2', 'terraform-state-techiescamp', 'jenkins/terraform.tfstate', 'us-west-2')
                     }
                 }
+            }
             }
         }
         stage('Terraform Plan') {
