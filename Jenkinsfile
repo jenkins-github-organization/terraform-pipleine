@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Terraform Init') {
             steps {
-              withCredentials([credentials('AWS_CRED')]) {
+              withCredentials([usernamePassword(credentialsId: 'AWS_CRED', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 container('terraform') {
                     script {
                         terraform.init('ec2', 'terraform-state-techiescamp', 'jenkins/terraform.tfstate', 'us-west-2')
