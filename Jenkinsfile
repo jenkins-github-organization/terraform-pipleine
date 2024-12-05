@@ -41,14 +41,6 @@ pipeline {
             }
         }
         stage('Terraform Apply/Destroy') {
-            when {
-                allOf {
-                    branch 'main'
-                    not {
-                        changeRequest()
-                    }
-                }
-            }
             steps {
                 container('terraform') {
                     script {
